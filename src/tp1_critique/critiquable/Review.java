@@ -49,7 +49,7 @@ public class Review {
     }
 
 
-    public String getTitre() {
+    public String getTitle() {
         return titre;
     }
 

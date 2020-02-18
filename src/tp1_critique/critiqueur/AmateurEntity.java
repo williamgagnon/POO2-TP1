@@ -56,7 +56,7 @@ public class AmateurEntity extends UserEntity {
         System.out.println("Voulez-vous laisser une appréciation pour cette critique ? o ou n");
         String reponse = Application.scanner.nextLine();
         if (reponse.equalsIgnoreCase("o")) {
-            System.out.println("Est-ce que la critique  \"" + review.getTitre() + "\" vous a été utile ? o ou n");
+            System.out.println("Est-ce que la critique  \"" + review.getTitle() + "\" vous a été utile ? o ou n");
             reponse = Application.scanner.nextLine();
             if (reponse.equalsIgnoreCase("o")) {
                 review.likeOrNot("Amateur_" + getNom(), true);
@@ -68,6 +68,6 @@ public class AmateurEntity extends UserEntity {
 
     @Override
     public String toString() {
-        return "Amateur{} " + super.toString();
+        return "Amateur{}" + super.toString();
     }
 }

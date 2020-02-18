@@ -23,6 +23,6 @@ class ViewActionTest {
 
     @Test
     void givenAValidReview_whenExecutingTheAction_ThenTheReviewIsDisplayed() {
-        assertTrue(viewAction.execute(review).contains(review.getTitre()));
+        assertTrue(viewAction.execute(review).contains(review.getTitle()));
     }
 }

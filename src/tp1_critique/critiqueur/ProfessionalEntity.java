@@ -27,7 +27,7 @@ public class ProfessionalEntity extends UserEntity {
     public boolean effaceCritique(Review review) {
         boolean onEfface = false;
 
-        System.out.println("Voulez-vous vraiment effacer la critique \"" + review.getTitre() + "\" ? (o ou n)");
+        System.out.println("Voulez-vous vraiment effacer la critique \"" + review.getTitle() + "\" ? (o ou n)");
         String reponse = Application.scanner.nextLine();
 
         if (reponse.equalsIgnoreCase("o")) {
