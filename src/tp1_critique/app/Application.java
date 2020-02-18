@@ -1,6 +1,8 @@
 package tp1_critique.app;
 
-import tp1_critique.critiquable.Critique;
+import tp1_critique.actions.ActionExecutor;
+import tp1_critique.actions.ViewAction;
+import tp1_critique.critiquable.Review;
 import tp1_critique.critiqueur.AmateurEntity;
 import tp1_critique.critiqueur.GuestEntity;
 import tp1_critique.critiqueur.ProfessionalEntity;
@@ -16,18 +18,20 @@ import java.util.Scanner;
  * Les utilisateurs sont prédéterminés et ils ne sont pas changeables.
  */
 public class Application {
-    private ArrayList<Critique> critiques;
+    private ArrayList<Review> reviews;
     private ArrayList<Object> utilisateurs;
     private Object utilisateurActuel = null;
+    private ActionExecutor actionExecutor;
 
     //Le même scanner est utilisé par  toutes les classes.
     public final static Scanner scanner = new Scanner(System.in);
 
     public Application() {
-        critiques = new ArrayList<>();
+        reviews = new ArrayList<>();
         utilisateurs = new ArrayList<>();
         initialiseUtilisateurs();
         initialiseCritique();
+        actionExecutor = new ActionExecutor(new ViewAction());
     }
 
     /**
@@ -49,9 +53,9 @@ public class Application {
      */
     private void initialiseCritique() {
 
-        critiques.add(new Critique("bateau", "Pierre"));
-        critiques.add(new Critique("avion", "Theodore"));
-        critiques.add(new Critique("auto", "Luc"));
+        reviews.add(new Review("bateau", "Pierre"));
+        reviews.add(new Review("avion", "Theodore"));
+        reviews.add(new Review("auto", "Luc"));
     }
 
     /**
@@ -121,10 +125,10 @@ public class Application {
         String reponse = scanner.nextLine();
 
         //On retrouve la critique voulue si elle existe
-        for (int i = 0; i < critiques.size(); i++) {
-            Critique critiqueActuelle = critiques.get(i);
-            if (critiqueActuelle.getTitre().equals(reponse)) {
-                gereSousMenu(critiqueActuelle);
+        for (int i = 0; i < reviews.size(); i++) {
+            Review reviewActuelle = reviews.get(i);
+            if (reviewActuelle.getTitre().equals(reponse)) {
+                gereSousMenu(reviewActuelle);
             }
         }
     }
@@ -139,23 +143,23 @@ public class Application {
 
         if (utilisateurActuel instanceof AmateurEntity) {
             AmateurEntity amateur = (AmateurEntity) utilisateurActuel;
-            Critique nouvelleCritique = amateur.ajouteCritique();
-            critiques.add(nouvelleCritique);
+            Review nouvelleReview = amateur.ajouteCritique();
+            reviews.add(nouvelleReview);
         } else if (utilisateurActuel instanceof GuestEntity) {
             System.out.println("Désolé vous ne poouvez pas faire ça! Il faut être amateur ou profesionnel");
         } else {
             ProfessionalEntity professionnel = (ProfessionalEntity) utilisateurActuel;
-            Critique nouvelleCritique = professionnel.ajouteCritique();
-            critiques.add(nouvelleCritique);
+            Review nouvelleReview = professionnel.ajouteCritique();
+            reviews.add(nouvelleReview);
         }
     }
 
     /**
      * Demande à l'utulisateur s'il veut effacer ou consulter la critique choisie.
      *
-     * @param critiqueActuelle la critique à géré
+     * @param reviewActuelle la critique à géré
      */
-    private void gereSousMenu(Critique critiqueActuelle) {
+    private void gereSousMenu(Review reviewActuelle) {
         System.out.println();
         System.out.println("Que désirez-vous faire avec cette critique?\n");
         System.out.println("l pour lire une critique");
@@ -165,10 +169,10 @@ public class Application {
 
         switch (reponse) {
             case "l":
-                consulteCritique(critiqueActuelle);
+                consulteCritique(reviewActuelle);
                 break;
             case "e":
-                effaceCritique(critiqueActuelle);
+                effaceCritique(reviewActuelle);
                 break;
             default:
                 System.out.println("Option inconnue...");
@@ -179,18 +183,18 @@ public class Application {
      * Permet de consulter une critique. Pour les invité et les amateurs, la consultation se termine par une
      * appréciation de la critique.
      *
-     * @param critiqueActuelle La critique à consulter et à apprécier.
+     * @param reviewActuelle La critique à consulter et à apprécier.
      */
-    private void consulteCritique(Critique critiqueActuelle) {
-        System.out.println(critiqueActuelle.toString());
+    private void consulteCritique(Review reviewActuelle) {
+        actionExecutor.execute(ViewAction.VIEW, reviewActuelle);
 
         //On permet aux amateurs et aux invités d'apprécier la critique "like ot not"
         if (utilisateurActuel instanceof GuestEntity) {
             GuestEntity invite = (GuestEntity) utilisateurActuel;
-            invite.apprecieCritique(critiqueActuelle);
+            invite.apprecieCritique(reviewActuelle);
         } else if (utilisateurActuel instanceof AmateurEntity) {
             AmateurEntity amateur = (AmateurEntity) utilisateurActuel;
-            amateur.apprecieCritique(critiqueActuelle);
+            amateur.apprecieCritique(reviewActuelle);
         }
         //Le professional ne peut pas faire de like.
     }
@@ -198,21 +202,21 @@ public class Application {
     /**
      * Efface la critique reçu en paramètre si elle existe.
      *
-     * @param critiqueAEffacer La critique qui doit être effacée.
+     * @param reviewAEffacer La critique qui doit être effacée.
      */
-    private void effaceCritique(Critique critiqueAEffacer) {
+    private void effaceCritique(Review reviewAEffacer) {
         assert utilisateurActuel != null : "Aucun utilisateur";
         boolean onEfface = false;
         if (utilisateurActuel instanceof ProfessionalEntity) {
             ProfessionalEntity professionnel = (ProfessionalEntity) utilisateurActuel;
-            onEfface = professionnel.effaceCritique(critiqueAEffacer);
+            onEfface = professionnel.effaceCritique(reviewAEffacer);
         } else if (utilisateurActuel instanceof AmateurEntity) {
             AmateurEntity professionnel = (AmateurEntity) utilisateurActuel;
-            onEfface = professionnel.effaceCritique(critiqueAEffacer);
+            onEfface = professionnel.effaceCritique(reviewAEffacer);
         }
         if (onEfface) {
-            critiques.remove(critiqueAEffacer);
-            System.out.println("La critique \""+critiqueAEffacer.getTitre()+"\" a été effacée.");
+            reviews.remove(reviewAEffacer);
+            System.out.println("La critique \""+ reviewAEffacer.getTitre()+"\" a été effacée.");
 
         }
     }
@@ -290,9 +294,9 @@ public class Application {
      * Affiche toutes les titres de critique connus par l'application.
      */
     public void afficheToutesCritiques() {
-        for (int i = 0; i < critiques.size(); i++) {
-            Critique critique = critiques.get(i);
-            System.out.println(critique.getTitre());
+        for (int i = 0; i < reviews.size(); i++) {
+            Review review = reviews.get(i);
+            System.out.println(review.getTitre());
         }
     }
 

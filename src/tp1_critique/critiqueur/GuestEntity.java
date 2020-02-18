@@ -1,7 +1,7 @@
 package tp1_critique.critiqueur;
 
 import tp1_critique.app.Application;
-import tp1_critique.critiquable.Critique;
+import tp1_critique.critiquable.Review;
 
 /**
  * Représente toute personne qui n'est pas préenregistrée dans le système.
@@ -23,18 +23,18 @@ public class GuestEntity extends UserEntity {
      * Demande en console l'appréciation d'une critique à l'utilisateur. Le nom de l'invité n'Est pas retenu. Seul
      * la marque "Invite l'est.
      *
-     * @param critique La critique à apprécier
+     * @param review La critique à apprécier
      */
-    public void apprecieCritique(Critique critique) {
+    public void apprecieCritique(Review review) {
         System.out.println("Voulez-vous laisser une appréciation pour cette critique ? o ou n");
         String reponse = Application.scanner.nextLine();
         if (reponse.equalsIgnoreCase("o")) {
-            System.out.println("Est-ce que la critique \"" + critique.getTitre() + "\" vous a été utile ? o ou n");
+            System.out.println("Est-ce que la critique \"" + review.getTitre() + "\" vous a été utile ? o ou n");
             reponse = Application.scanner.nextLine();
             if (reponse.equalsIgnoreCase("o")) {
-                critique.likeOrNot(MENTION_INVITE, true);
+                review.likeOrNot(MENTION_INVITE, true);
             } else {
-                critique.likeOrNot(MENTION_INVITE, false);
+                review.likeOrNot(MENTION_INVITE, false);
             }
         }
     }

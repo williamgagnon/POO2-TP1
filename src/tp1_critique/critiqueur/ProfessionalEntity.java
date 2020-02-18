@@ -1,7 +1,7 @@
 package tp1_critique.critiqueur;
 
 import tp1_critique.app.Application;
-import tp1_critique.critiquable.Critique;
+import tp1_critique.critiquable.Review;
 
 /**
  * Le professionnel est payé par la compagnie qui utilise l'application. Il peut:
@@ -21,13 +21,13 @@ public class ProfessionalEntity extends UserEntity {
     /**
      * Permet de déterminer si une critique peut être effacée par la personne.
      *
-     * @param critique la critique a effacer
+     * @param review la critique a effacer
      * @return vrai si la critique peut être effacée
      */
-    public boolean effaceCritique(Critique critique) {
+    public boolean effaceCritique(Review review) {
         boolean onEfface = false;
 
-        System.out.println("Voulez-vous vraiment effacer la critique \"" + critique.getTitre() + "\" ? (o ou n)");
+        System.out.println("Voulez-vous vraiment effacer la critique \"" + review.getTitre() + "\" ? (o ou n)");
         String reponse = Application.scanner.nextLine();
 
         if (reponse.equalsIgnoreCase("o")) {
@@ -43,12 +43,12 @@ public class ProfessionalEntity extends UserEntity {
      *
      * @return La critique La critique qui vient d'être créée.
      */
-    public Critique ajouteCritique() {
+    public Review ajouteCritique() {
         System.out.println("Quel est le titre de votre critique ?");
         String reponse = Application.scanner.nextLine();
-        Critique nouvelleCritique = new Critique(reponse, getNom() + professionalLicense);
-        nouvelleCritique.rempli();
-        return nouvelleCritique;
+        Review nouvelleReview = new Review(reponse, getNom() + professionalLicense);
+        nouvelleReview.rempli();
+        return nouvelleReview;
     }
 
     @Override

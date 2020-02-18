@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Classe qui représente une critique. Ce sustème accorde une valeur
  * aux différents éléments plutôt qu'une note.
  */
-public class Critique {
+public class Review {
     private String titre;
     private float valeurAccordee;
     private float valeurReelle;
@@ -20,7 +20,7 @@ public class Critique {
     private ArrayList<String> likers = new ArrayList<>(20);
 
 
-    public Critique(String titre, String auteur) {
+    public Review(String titre, String auteur) {
         this.titre = titre;
         this.auteur = auteur;
     }

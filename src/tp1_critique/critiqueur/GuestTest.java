@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class InviteTest {
-    private GuestEntity invite;
+class GuestTest {
+    private GuestEntity guest;
     private String entropy = Long.toString(System.currentTimeMillis());
     private String currentName = "Will" + entropy;
 
     @BeforeEach
     void setUp() {
-        invite = new GuestEntity(currentName);
+        guest = new GuestEntity(currentName);
     }
 
     @AfterEach
@@ -22,6 +22,6 @@ class InviteTest {
 
     @Test
     void givenANewInvitee_whenGettingName_ThenNameIsReturned() {
-        assertEquals(currentName, invite.getNom());
+        assertEquals(currentName, guest.getNom());
     }
 }
