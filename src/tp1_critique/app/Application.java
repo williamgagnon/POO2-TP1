@@ -1,7 +1,6 @@
 package tp1_critique.app;
 
-import tp1_critique.actions.ActionExecutor;
-import tp1_critique.actions.ViewAction;
+import tp1_critique.actions.*;
 import tp1_critique.critiquable.Review;
 import tp1_critique.critiqueur.*;
 
@@ -22,7 +21,7 @@ public class Application {
         users = new ArrayList<>();
         initializeUsers();
         initializeReviews();
-        actionExecutor = new ActionExecutor(new ViewAction());
+        actionExecutor = new ActionExecutor(new ViewAction(), new RateAction(), new EraseAction(), new CreateAction());
     }
 
     private void initializeUsers() {
@@ -62,23 +61,30 @@ public class Application {
 
     private void printUserNames() {
         for (User user : users) {
-            System.out.println(user.getNom());
+            System.out.println(user.getName());
         }
     }
 
-    private String getCurrentUserName() {
-        return currentUser.getNom();
+    private User findUser(String username) {
+        User result = null;
+
+        for (User user : users) {
+            if (username.equals(user.getName())) {
+                result = user;
+                break;
+            }
+        }
+
+        return result;
     }
 
-    /**
-     * Présente le menu principal avec les actions suivantes:
-     * ajouter,consulter, quitter, connecter. L'action elle même est gérée par
-     * l'objet utilisateur.
-     *
-     * @return vrai tant que l'utilisateur n'a pas demander de quitter.
-     */
+    private String getCurrentUserName() {
+        return currentUser.getName();
+    }
+
     public boolean chooseAction() {
         boolean result = true;
+
         System.out.println("Que désirez-vous faire?\n");
         System.out.println("a pour ajouter une critique");
         System.out.println("l pour lire une critique");
@@ -88,10 +94,10 @@ public class Application {
 
         switch (answer) {
             case "a":
-                ajouteCritique();
+                createReview();
                 break;
             case "l":
-                consulteCritique();
+                viewReviewAndPossiblyRate();
                 break;
             case "q":
                 result = false;
@@ -105,46 +111,28 @@ public class Application {
         return result;
     }
 
-    /**
-     * Permet de consulter la liste des critiques et de choisir l'action suivante:
-     * effacer ou lire la critique
-     */
-    public void consulteCritique() {
+
+    public void viewReviewAndPossiblyRate() {
         System.out.println("Quelle critique voulez-vous consulter ?");
         printAllReviews();
 
         String reponse = scanner.nextLine();
 
-        for (int i = 0; i < reviews.size(); i++) {
-            Review reviewActuelle = reviews.get(i);
-            if (reviewActuelle.getTitle().equals(reponse)) {
-                gereSousMenu(reviewActuelle);
+        for (Review review : reviews) {
+            if (review.getTitle().equals(reponse)) {
+                chooseActionOnReview(review);
+                break;
             }
         }
     }
 
-    private void ajouteCritique() {
-        assert currentUser != null : "Aucun utilisateur";
-
-        if (currentUser instanceof AmateurEntity) {
-            AmateurEntity amateur = (AmateurEntity) currentUser;
-            Review nouvelleReview = amateur.ajouteCritique();
-            reviews.add(nouvelleReview);
-        } else if (currentUser instanceof GuestEntity) {
-            System.out.println("Désolé vous ne poouvez pas faire ça! Il faut être amateur ou profesionnel");
-        } else {
-            ProfessionalEntity professionnel = (ProfessionalEntity) currentUser;
-            Review nouvelleReview = professionnel.ajouteCritique();
-            reviews.add(nouvelleReview);
+    public void printAllReviews() {
+        for (Review review : reviews) {
+            System.out.println(review.getTitle());
         }
     }
 
-    /**
-     * Demande à l'utulisateur s'il veut effacer ou consulter la critique choisie.
-     *
-     * @param reviewActuelle la critique à géré
-     */
-    private void gereSousMenu(Review reviewActuelle) {
+    private void chooseActionOnReview(Review review) {
         System.out.println();
         System.out.println("Que désirez-vous faire avec cette critique?\n");
         System.out.println("l pour lire une critique");
@@ -154,69 +142,39 @@ public class Application {
 
         switch (reponse) {
             case "l":
-                consulteCritique(reviewActuelle);
+                viewReviewAndPossiblyRate(review);
                 break;
             case "e":
-                effaceCritique(reviewActuelle);
+                deleteReview(review);
                 break;
             default:
                 System.out.println("Option inconnue...");
         }
     }
 
-    /**
-     * Permet de consulter une critique. Pour les invité et les amateurs, la consultation se termine par une
-     * appréciation de la critique.
-     *
-     * @param reviewActuelle La critique à consulter et à apprécier.
-     */
-    private void consulteCritique(Review reviewActuelle) {
-        actionExecutor.execute(ViewAction.VIEW, reviewActuelle);
-
-        //On permet aux amateurs et aux invités d'apprécier la critique "like ot not"
-        if (currentUser instanceof GuestEntity) {
-            GuestEntity invite = (GuestEntity) currentUser;
-            invite.apprecieCritique(reviewActuelle);
-        } else if (currentUser instanceof AmateurEntity) {
-            AmateurEntity amateur = (AmateurEntity) currentUser;
-            amateur.apprecieCritique(reviewActuelle);
-        }
-        //Le professional ne peut pas faire de like.
+    private void viewReviewAndPossiblyRate(Review review) {
+        actionExecutor.execute(ViewAction.VIEW, review, currentUser);
+        actionExecutor.execute(RateAction.RATE, review, currentUser);
     }
 
-    private void effaceCritique(Review reviewAEffacer) {
-        assert currentUser != null : "Aucun utilisateur";
-        boolean onEfface = false;
-        if (currentUser instanceof ProfessionalEntity) {
-            ProfessionalEntity professionnel = (ProfessionalEntity) currentUser;
-            onEfface = professionnel.effaceCritique(reviewAEffacer);
-        } else if (currentUser instanceof AmateurEntity) {
-            AmateurEntity professionnel = (AmateurEntity) currentUser;
-            onEfface = professionnel.effaceCritique(reviewAEffacer);
-        }
-        if (onEfface) {
-            reviews.remove(reviewAEffacer);
-            System.out.println("La critique \"" + reviewAEffacer.getTitle() + "\" a été effacée.");
+    private void deleteReview(Review review) {
+        String answer = actionExecutor.execute("Erase", review, currentUser);
 
+        if (answer.equals("o")) {
+            reviews.remove(review);
+            System.out.println("La critique \"" + review.getTitle() + "\" a été effacée.");
         }
     }
 
-    private User findUser(String username) {
-        User result = null;
+    private void createReview() {
+        Review review = new Review("", "");
 
-        for (User user : users) {
-            if (username.equals(user.getNom())) {
-                result = user;
-                break;
-            }
-        }
-
-        return result;
-    }
-
-    public void printAllReviews() {
-        for (Review review : reviews) {
-            System.out.println(review.getTitle());
+        if (currentUser.getType().equals(GuestEntity.USER_TYPE)) {
+            System.out.println("Désolé vous ne poouvez pas faire ça! Il faut être amateur ou profesionnel");
+        } else {
+            actionExecutor.execute("Create", review, currentUser);
+            reviews.add(review);
+            System.out.println("La critique \"" + review.getTitle() + "\" a été créée.");
         }
     }
 }

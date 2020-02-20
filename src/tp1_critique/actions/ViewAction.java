@@ -1,6 +1,7 @@
 package tp1_critique.actions;
 
 import tp1_critique.critiquable.Review;
+import tp1_critique.critiqueur.User;
 
 public class ViewAction implements Action {
     public static final String VIEW = "View";
@@ -8,16 +9,16 @@ public class ViewAction implements Action {
     public ViewAction() {
     }
 
-    public String execute(Review review) {
+    @Override
+    public String getCode() {
+        return VIEW;
+    }
+
+    public String execute(Review review, User user) {
         String result = review.toString();
 
         System.out.println(result);
 
         return result;
-    }
-
-    @Override
-    public String getCode() {
-        return VIEW;
     }
 }

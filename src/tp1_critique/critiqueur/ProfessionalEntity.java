@@ -12,28 +12,17 @@ import tp1_critique.critiquable.Review;
  * - apprécier une critique
  */
 public class ProfessionalEntity extends UserEntity {
+    public static final String USER_TYPE = "Professional";
+
     private String professionalLicense;
 
     public ProfessionalEntity(String nom) {
         super(nom);
     }
 
-    /**
-     * Permet de déterminer si une critique peut être effacée par la personne.
-     *
-     * @param review la critique a effacer
-     * @return vrai si la critique peut être effacée
-     */
-    public boolean effaceCritique(Review review) {
-        boolean onEfface = false;
-
-        System.out.println("Voulez-vous vraiment effacer la critique \"" + review.getTitle() + "\" ? (o ou n)");
-        String reponse = Application.scanner.nextLine();
-
-        if (reponse.equalsIgnoreCase("o")) {
-            onEfface = true;
-        }
-        return onEfface;
+    @Override
+    public String getType() {
+        return USER_TYPE;
     }
 
     /**
@@ -46,7 +35,7 @@ public class ProfessionalEntity extends UserEntity {
     public Review ajouteCritique() {
         System.out.println("Quel est le titre de votre critique ?");
         String reponse = Application.scanner.nextLine();
-        Review nouvelleReview = new Review(reponse, getNom() + professionalLicense);
+        Review nouvelleReview = new Review(reponse, getName() + professionalLicense);
         nouvelleReview.rempli();
         return nouvelleReview;
     }

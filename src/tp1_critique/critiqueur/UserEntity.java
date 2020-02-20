@@ -1,21 +1,21 @@
 package tp1_critique.critiqueur;
 
 public abstract class UserEntity implements User {
-    private String nom;
+    private String name;
 
-    public UserEntity(String nom) {
-        assert nom != null : "nom nul";
-        this.nom = nom;
+    public UserEntity(String name) {
+        assert name != null : "nom nul";
+        this.name = name;
     }
 
-    public String getNom() {
-        return nom;
+    public String getName() {
+        return name;
     }
 
     @Override
     public String toString() {
         return "Utilisateur{" +
-                "nom='" + nom + '\'' +
+                "nom='" + name + '\'' +
                 '}';
     }
 }

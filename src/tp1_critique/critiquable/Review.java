@@ -4,57 +4,56 @@ import tp1_critique.critiqueur.GuestEntity;
 
 import java.util.ArrayList;
 
-/**
- * Classe qui représente une critique. Ce sustème accorde une valeur
- * aux différents éléments plutôt qu'une note.
- */
 public class Review {
-    private String titre;
+    private String title;
     private float valeurAccordee;
     private float valeurReelle;
-    private long nombreDeLike = 0;
-    private long nombreDeLikeInvites = 0;
-    private long nombreDeNotLike = 0;
-    private long nombreDeNotLikeInvites = 0;
-    private String auteur;
+    private long likes = 0;
+    private long guestLikes = 0;
+    private long dislikes = 0;
+    private long guestDislikes = 0;
+    private String author;
     private ArrayList<String> likers = new ArrayList<>(20);
 
-
-    public Review(String titre, String auteur) {
-        this.titre = titre;
-        this.auteur = auteur;
+    public Review(String title, String author) {
+        this.title = title;
+        this.author = author;
     }
 
-    /**
-     * Permet d'apprécier une critique
-     *
-     * @param nom      Le nom de la personne qui fait l'appréciation.
-     *                 Le mot "Invite" est réservé pour indiqué tout utilisateur invité
-     * @param isLiking vrai si la critique a été appréciée, faux sinon.
-     */
-    public void likeOrNot(String nom, boolean isLiking) {
-        if (nom.equalsIgnoreCase(GuestEntity.MENTION_INVITE)) {
+    public void likeOrNot(String userType, boolean isLiking) {
+        if (userType.equalsIgnoreCase(GuestEntity.USER_TYPE)) {
             if (isLiking) {
-                nombreDeLikeInvites++;
+                guestLikes++;
             } else {
-                nombreDeNotLikeInvites++;
+                guestDislikes++;
             }
         } else {
             if (isLiking) {
-                nombreDeLike++;
+                likes++;
             } else {
-                nombreDeNotLike++;
+                dislikes++;
             }
         }
     }
 
-
     public String getTitle() {
-        return titre;
+        return title;
     }
 
-    public String getAuteur() {
-        return auteur;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public long getGuestLikes() {
+        return guestLikes;
     }
 
     public void demandeInfos() {
@@ -72,18 +71,18 @@ public class Review {
      * Rempli la critique en demandant en console les informations nécessaires pour cette critique.
      */
     public void rempli() {
-        System.out.println("Vos différentes sortes de critique devront deamnder les informations nécessaires !!!");
+        System.out.println("Vos différentes sortes de critique devront demander les informations nécessaires !!!");
     }
 
     @Override
     public String toString() {
         return "Critique{" +
-                "titre='" + titre + '\'' +
+                "titre='" + title + '\'' +
                 ", valeurAccordee=" + valeurAccordee +
                 ", valeurReelle=" + valeurReelle +
-                ", nombreDeLike=" + (nombreDeLike + nombreDeLikeInvites) +
-                ", nombreDeNotLike=" + (nombreDeNotLike + nombreDeNotLikeInvites) +
-                ", auteur='" + auteur + '\'' +
+                ", nombreDeLike=" + (likes + guestLikes) +
+                ", nombreDeNotLike=" + (dislikes + guestDislikes) +
+                ", auteur='" + author + '\'' +
                 '}';
     }
 }

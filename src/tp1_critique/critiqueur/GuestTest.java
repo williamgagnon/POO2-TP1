@@ -22,6 +22,6 @@ class GuestTest {
 
     @Test
     void givenANewInvitee_whenGettingName_ThenNameIsReturned() {
-        assertEquals(currentName, guest.getNom());
+        assertEquals(currentName, guest.getName());
     }
 }

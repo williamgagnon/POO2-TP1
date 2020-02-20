@@ -24,7 +24,7 @@ class ActionExecutorTest {
 
     @Test
     void givenAnActionCodeAndAReview_whenRequestingToExecute_thenActionExecutorExecutesTheRightAction() {
-        assertNotNull(actionExecutor.execute(ViewAction.VIEW, currentReview));
-        assertTrue(actionExecutor.execute(ViewAction.VIEW, currentReview).contains(currentReview.getTitle()));
+        assertNotNull(actionExecutor.execute(ViewAction.VIEW, currentReview, TestUtil.randomGuest()));
+        assertTrue(actionExecutor.execute(ViewAction.VIEW, currentReview, TestUtil.randomGuest()).contains(currentReview.getTitle()));
     }
 }
