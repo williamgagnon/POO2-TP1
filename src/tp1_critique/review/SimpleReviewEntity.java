@@ -1,6 +1,6 @@
 package tp1_critique.critiquable;
 
-import tp1_critique.critiqueur.GuestEntity;
+import tp1_critique.users.GuestEntity;
 
 import java.util.ArrayList;
 

@@ -2,10 +2,8 @@ package tp1_critique.actions;
 
 import tp1_critique.app.Application;
 import tp1_critique.critiquable.Review;
-import tp1_critique.critiqueur.ProfessionalEntity;
-import tp1_critique.critiqueur.User;
-
-import java.util.Random;
+import tp1_critique.users.ProfessionalEntity;
+import tp1_critique.users.User;
 
 public class RateAction implements Action {
     public static final String RATE = "Rate";
@@ -38,7 +36,7 @@ public class RateAction implements Action {
                 }
             }
         }
-        
+
         return result;
     }
 }

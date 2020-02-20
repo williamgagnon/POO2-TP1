@@ -1,7 +1,4 @@
-package tp1_critique.critiqueur;
-
-import tp1_critique.app.Application;
-import tp1_critique.critiquable.Review;
+package tp1_critique.user;
 
 public class GuestEntity extends UserEntity {
     public static final String USER_TYPE = "Guest";

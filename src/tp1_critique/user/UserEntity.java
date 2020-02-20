@@ -1,4 +1,4 @@
-package tp1_critique.critiqueur;
+package tp1_critique.user;
 
 public abstract class UserEntity implements User {
     private String name;

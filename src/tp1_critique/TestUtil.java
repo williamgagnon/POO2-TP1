@@ -1,8 +1,8 @@
-package tp1_critique.actions;
+package tp1_critique;
 
-import tp1_critique.critiquable.Review;
-import tp1_critique.critiqueur.GuestEntity;
-import tp1_critique.critiqueur.User;
+import tp1_critique.review.SimpleReviewEntity;
+import tp1_critique.user.GuestEntity;
+import tp1_critique.user.User;
 
 public class TestUtil {
 
@@ -10,13 +10,13 @@ public class TestUtil {
 
     }
 
-    public static Review randomReview() {
-        Review result;
+    public static SimpleReviewEntity randomReview() {
+        SimpleReviewEntity result;
 
         String currentAuthor = randomGuest().getName();
         String entropy = Long.toString(System.currentTimeMillis());
         String currentTitle = "Hello World" + entropy;
-        result = new Review(currentTitle, currentAuthor);
+        result = new SimpleReviewEntity(currentTitle, currentAuthor);
 
         return result;
     }

@@ -1,19 +1,15 @@
-package tp1_critique.critiqueur;
+package tp1_critique.user;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import tp1_critique.actions.TestUtil;
-import tp1_critique.actions.ViewAction;
-import tp1_critique.critiquable.Review;
-
-import static org.junit.jupiter.api.Assertions.*;
+import tp1_critique.TestUtil;
+import tp1_critique.review.SimpleReviewEntity;
 
 class GuestEntityTest {
-    Review review;
+    SimpleReviewEntity simpleReviewEntity;
 
     @BeforeEach
     void setUp() {
-        review = TestUtil.randomReview();
+        simpleReviewEntity = TestUtil.randomReview();
     }
 
 //    @Test

@@ -3,8 +3,8 @@ package tp1_critique.actions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tp1_critique.critiquable.Review;
-import tp1_critique.actions.TestUtil;
-import tp1_critique.critiqueur.User;
+import tp1_critique.TestUtil;
+import tp1_critique.users.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 

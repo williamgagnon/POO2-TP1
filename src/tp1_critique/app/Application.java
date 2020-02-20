@@ -1,15 +1,18 @@
 package tp1_critique.app;
 
-import tp1_critique.actions.*;
-import tp1_critique.critiquable.Review;
-import tp1_critique.critiqueur.*;
+import tp1_critique.action.*;
+import tp1_critique.review.DatedReviewEntity;
+import tp1_critique.review.DetailedReviewEntity;
+import tp1_critique.review.Review;
+import tp1_critique.review.SimpleReviewEntity;
+import tp1_critique.user.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Application {
-    private List<Review> reviews;
+    private List<Review> reviewEntities;
     private List<User> users;
     private User currentUser = null;
     private ActionExecutor actionExecutor;
@@ -17,7 +20,7 @@ public class Application {
     public final static Scanner scanner = new Scanner(System.in);
 
     public Application() {
-        reviews = new ArrayList<>();
+        reviewEntities = new ArrayList<>();
         users = new ArrayList<>();
         initializeUsers();
         initializeReviews();
@@ -35,9 +38,9 @@ public class Application {
     }
 
     private void initializeReviews() {
-        reviews.add(new Review("bateau", "Pierre"));
-        reviews.add(new Review("avion", "Theodore"));
-        reviews.add(new Review("auto", "Luc"));
+        reviewEntities.add(new SimpleReviewEntity("bateau", "Pierre"));
+        reviewEntities.add(new SimpleReviewEntity("avion", "Theodore"));
+        reviewEntities.add(new SimpleReviewEntity("auto", "Luc"));
     }
 
     public void run() {
@@ -118,21 +121,21 @@ public class Application {
 
         String reponse = scanner.nextLine();
 
-        for (Review review : reviews) {
-            if (review.getTitle().equals(reponse)) {
-                chooseActionOnReview(review);
+        for (Review simpleReviewEntity : reviewEntities) {
+            if (simpleReviewEntity.getTitle().equals(reponse)) {
+                chooseActionOnReview(simpleReviewEntity);
                 break;
             }
         }
     }
 
     public void printAllReviews() {
-        for (Review review : reviews) {
-            System.out.println(review.getTitle());
+        for (Review simpleReviewEntity : reviewEntities) {
+            System.out.println(simpleReviewEntity.getTitle());
         }
     }
 
-    private void chooseActionOnReview(Review review) {
+    private void chooseActionOnReview(Review simpleReviewEntity) {
         System.out.println();
         System.out.println("Que désirez-vous faire avec cette critique?\n");
         System.out.println("l pour lire une critique");
@@ -142,38 +145,60 @@ public class Application {
 
         switch (reponse) {
             case "l":
-                viewReviewAndPossiblyRate(review);
+                viewReviewAndPossiblyRate(simpleReviewEntity);
                 break;
             case "e":
-                deleteReview(review);
+                deleteReview(simpleReviewEntity);
                 break;
             default:
                 System.out.println("Option inconnue...");
         }
     }
 
-    private void viewReviewAndPossiblyRate(Review review) {
-        actionExecutor.execute(ViewAction.VIEW, review, currentUser);
-        actionExecutor.execute(RateAction.RATE, review, currentUser);
+    private void viewReviewAndPossiblyRate(Review simpleReviewEntity) {
+        actionExecutor.execute(ViewAction.VIEW, simpleReviewEntity, currentUser);
+        actionExecutor.execute(RateAction.RATE, simpleReviewEntity, currentUser);
     }
 
-    private void deleteReview(Review review) {
-        String answer = actionExecutor.execute("Erase", review, currentUser);
+    private void deleteReview(Review simpleReviewEntity) {
+        String answer = actionExecutor.execute(EraseAction.ERASE, simpleReviewEntity, currentUser);
 
         if (answer.equals("o")) {
-            reviews.remove(review);
-            System.out.println("La critique \"" + review.getTitle() + "\" a été effacée.");
+            reviewEntities.remove(simpleReviewEntity);
+            System.out.println("La critique \"" + simpleReviewEntity.getTitle() + "\" a été effacée.");
         }
     }
 
     private void createReview() {
-        Review review = new Review("", "");
-
         if (currentUser.getType().equals(GuestEntity.USER_TYPE)) {
             System.out.println("Désolé vous ne poouvez pas faire ça! Il faut être amateur ou profesionnel");
         } else {
-            actionExecutor.execute("Create", review, currentUser);
-            reviews.add(review);
+            Review review = null;
+
+            while (review == null) {
+                System.out.println("Quel type de critique souhaitez-vous créer?");
+                System.out.println("S pour Simple");
+                System.out.println("D pour Datée");
+                System.out.println("X pour Détaillée");
+                String answer = scanner.nextLine();
+
+                switch (answer) {
+                    case "S":
+                        review = new SimpleReviewEntity("", "");
+                        break;
+                    case "D":
+                        review = new DatedReviewEntity("", "");
+                        break;
+                    case "X":
+                        review = new DetailedReviewEntity("", "");
+                        break;
+                    default:
+                        System.out.println("Option inconnue...choisis-en une bonne au moins.");
+                }
+            }
+            actionExecutor.execute(CreateAction.CREATE, review, currentUser);
+            reviewEntities.add(review);
+
             System.out.println("La critique \"" + review.getTitle() + "\" a été créée.");
         }
     }
