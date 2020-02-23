@@ -1,14 +1,18 @@
-package tp1_critique.actions;
+package tp1_critique.action;
 
 import tp1_critique.app.Application;
-import tp1_critique.critiquable.Review;
-import tp1_critique.users.ProfessionalEntity;
-import tp1_critique.users.User;
+import tp1_critique.commandline.CLI;
+import tp1_critique.review.Review;
+import tp1_critique.review.SimpleReviewEntity;
+import tp1_critique.user.ProfessionalEntity;
+import tp1_critique.user.User;
 
 public class RateAction implements Action {
     public static final String RATE = "Rate";
+    private CLI cliComponent;
 
-    public RateAction() {
+    public RateAction(CLI cliComponent) {
+        this.cliComponent = cliComponent;
     }
 
     @Override
@@ -20,17 +24,16 @@ public class RateAction implements Action {
     public String execute(Review review, User user) {
         String result = "";
 
-        System.out.println("Voulez-vous laisser une appréciation pour cette critique ? o ou n");
-        String answer = Application.scanner.nextLine();
+        String answer = cliComponent.printAndGetCommand("Voulez-vous laisser une appréciation pour cette critique ? o ou n");
 
         if (user.getType().equals(ProfessionalEntity.USER_TYPE)) {
-            System.out.println("Vous ne pouvez pas apprécier de critiques.");
+            System.out.println("Vous ne pouvez pas apprécier de critiques.\n");
         } else {
             if (answer.equalsIgnoreCase("o")) {
-                System.out.println("Est-ce que la critique \"" + review.getTitle() + "\" vous a été utile ? o ou n");
-                answer = Application.scanner.nextLine();
+                answer = cliComponent.printAndGetCommand("Est-ce que la critique \"" + review.getTitle() + "\" vous a été utile ? o ou n\n");
                 if (answer.equalsIgnoreCase("o")) {
                     review.likeOrNot(user.getType(), true);
+                    result = "o";
                 } else {
                     review.likeOrNot(user.getType(), false);
                 }

@@ -1,13 +1,18 @@
-package tp1_critique.actions;
+package tp1_critique.action;
 
 import tp1_critique.app.Application;
-import tp1_critique.critiquable.Review;
-import tp1_critique.users.User;
+import tp1_critique.commandline.CLI;
+import tp1_critique.review.Review;
+import tp1_critique.review.SimpleReviewEntity;
+import tp1_critique.user.User;
 
 public class EraseAction implements Action {
+    CLI cliComponent;
+
     public static final String ERASE = "Erase";
 
-    public EraseAction() {
+    public EraseAction(CLI cliComponent) {
+        this.cliComponent = cliComponent;
     }
 
     @Override
@@ -16,32 +21,31 @@ public class EraseAction implements Action {
     }
 
     @Override
-    public String execute(Review review, User user) {
+    public String execute(Review simpleReviewEntity, User user) {
         String result = "";
 
         if (user.getType() == "Professional") {
-
-            System.out.println("Voulez-vous vraiment effacer la critique \"" + review.getTitle() + "\" ? (o ou n)");
-            String answer = Application.scanner.nextLine();
+            String answer = cliComponent.printAndGetCommand("Voulez-vous vraiment effacer la critique \"" + simpleReviewEntity.getTitle() + "\" ? (o ou n)\n");
 
             if (answer.equalsIgnoreCase("o")) {
                 result = "o";
             }
         } else if (user.getType() == "Amateur") {
-            result = amateurReviewDelete(review, user);
+            result = amateurReviewDelete(simpleReviewEntity, user);
+        } else {
+            System.out.println("Vous ne pouvez effacer une critique. Cette action est réservée aux amateurs et aux professionnels.");
         }
 
         return result;
     }
 
-    public String amateurReviewDelete(Review review, User user) {
+    public String amateurReviewDelete(Review simpleReviewEntity, User user) {
         String result = "";
 
-        if (review.getAuthor().equalsIgnoreCase((user.getName()))) {
-            System.out.println("Voulez-vous vraiment effacer cette critique ? (o ou n)");
-            String reponse = Application.scanner.nextLine();
+        if (simpleReviewEntity.getAuthor().equalsIgnoreCase((user.getName()))) {
+            String answer = cliComponent.printAndGetCommand("Voulez-vous vraiment effacer la critique \"" + simpleReviewEntity.getTitle() + "\" ? (o ou n)\n");
 
-            if (reponse.equalsIgnoreCase("o")) {
+            if (answer.equalsIgnoreCase("o")) {
                 result = "o";
             }
         } else {

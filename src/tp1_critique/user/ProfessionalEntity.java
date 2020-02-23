@@ -4,9 +4,9 @@ import tp1_critique.app.Application;
 import tp1_critique.review.SimpleReviewEntity;
 
 public class ProfessionalEntity extends UserEntity {
-    public static final String USER_TYPE = "Professional";
+    private String professionalLicense = "Diplomé de l'université Gagnon.";
 
-    private String professionalLicense;
+    public static final String USER_TYPE = "Professional";
 
     public ProfessionalEntity(String nom) {
         super(nom);
@@ -19,8 +19,6 @@ public class ProfessionalEntity extends UserEntity {
 
     @Override
     public String toString() {
-        return "Professionnel{" +
-                "professionalLicense='" + professionalLicense + '\'' +
-                "} " + super.toString();
+        return super.toString() + "\nprofessionalLiscense = " + professionalLicense + "\n}" + "\n";
     }
 }

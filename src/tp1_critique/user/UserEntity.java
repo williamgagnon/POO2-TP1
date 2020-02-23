@@ -4,7 +4,7 @@ public abstract class UserEntity implements User {
     private String name;
 
     public UserEntity(String name) {
-        assert name != null : "nom nul";
+        assert name != null : "nom null";
         this.name = name;
     }
 
@@ -13,9 +13,11 @@ public abstract class UserEntity implements User {
     }
 
     @Override
+    public abstract String getType();
+
+    @Override
     public String toString() {
-        return "Utilisateur{" +
-                "nom='" + name + '\'' +
-                '}';
+        return name + " {" +
+                "\ntype = " + getType() + "\n}\n";
     }
 }

@@ -1,23 +1,27 @@
-package tp1_critique.actions;
+package tp1_critique.action;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tp1_critique.critiquable.Review;
+import tp1_critique.commandline.CLI;
+import tp1_critique.commandline.CLIComponent;
+import tp1_critique.review.SimpleReviewEntity;
 import tp1_critique.TestUtil;
-import tp1_critique.users.User;
+import tp1_critique.user.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class EraseActionTest {
-    Review review;
+    SimpleReviewEntity simpleReviewEntity;
     EraseAction eraseAction;
     User userEntity;
+    CLI cliComponent;
 
 
     @BeforeEach
     void setUp() {
-        review = TestUtil.randomReview();
-        eraseAction = new EraseAction();
+        simpleReviewEntity = TestUtil.randomReview();
+        cliComponent = new CLIComponent();
+        eraseAction = new EraseAction(cliComponent);
         userEntity = TestUtil.randomGuest();
     }
 
@@ -27,6 +31,6 @@ class EraseActionTest {
 
     @Test
     void execute() {
-        assertEquals("o", eraseAction.execute(review, userEntity));
+        assertEquals("o", eraseAction.execute(simpleReviewEntity, userEntity));
     }
 }

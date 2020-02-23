@@ -1,22 +1,22 @@
-package tp1_critique.actions;
+package tp1_critique.action;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tp1_critique.TestUtil;
-import tp1_critique.critiquable.Review;
+import tp1_critique.review.SimpleReviewEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ActionExecutorTest {
     private String entropy = Long.toString(System.currentTimeMillis());
     private ActionExecutor actionExecutor;
-    private Review currentReview;
+    private SimpleReviewEntity currentSimpleReviewEntity;
 
     @BeforeEach
     void setUp() {
         actionExecutor = new ActionExecutor(new ViewAction());
-        currentReview = TestUtil.randomReview();
+        currentSimpleReviewEntity = TestUtil.randomReview();
     }
 
     @AfterEach
@@ -25,7 +25,7 @@ class ActionExecutorTest {
 
     @Test
     void givenAnActionCodeAndAReview_whenRequestingToExecute_thenActionExecutorExecutesTheRightAction() {
-        assertNotNull(actionExecutor.execute(ViewAction.VIEW, currentReview, TestUtil.randomGuest()));
-        assertTrue(actionExecutor.execute(ViewAction.VIEW, currentReview, TestUtil.randomGuest()).contains(currentReview.getTitle()));
+        assertNotNull(actionExecutor.execute(ViewAction.VIEW, currentSimpleReviewEntity, TestUtil.randomGuest()));
+        assertTrue(actionExecutor.execute(ViewAction.VIEW, currentSimpleReviewEntity, TestUtil.randomGuest()).contains(currentSimpleReviewEntity.getTitle()));
     }
 }

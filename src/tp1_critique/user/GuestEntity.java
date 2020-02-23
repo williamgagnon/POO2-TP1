@@ -14,6 +14,6 @@ public class GuestEntity extends UserEntity {
 
     @Override
     public String toString() {
-        return "Invite{} " + super.toString();
+        return super.toString();
     }
 }

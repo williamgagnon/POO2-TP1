@@ -1,6 +1,7 @@
 package tp1_critique.app;
 
 import tp1_critique.action.*;
+import tp1_critique.commandline.CLIComponent;
 import tp1_critique.review.DatedReviewEntity;
 import tp1_critique.review.DetailedReviewEntity;
 import tp1_critique.review.Review;
@@ -16,15 +17,15 @@ public class Application {
     private List<User> users;
     private User currentUser = null;
     private ActionExecutor actionExecutor;
-
-    public final static Scanner scanner = new Scanner(System.in);
+    private CLIComponent cliComponent;
 
     public Application() {
         reviewEntities = new ArrayList<>();
         users = new ArrayList<>();
         initializeUsers();
         initializeReviews();
-        actionExecutor = new ActionExecutor(new ViewAction(), new RateAction(), new EraseAction(), new CreateAction());
+        cliComponent = new CLIComponent();
+        actionExecutor = new ActionExecutor(new ViewAction(), new RateAction(cliComponent), new EraseAction(cliComponent), new CreateAction());
     }
 
     private void initializeUsers() {
@@ -38,22 +39,21 @@ public class Application {
     }
 
     private void initializeReviews() {
-        reviewEntities.add(new SimpleReviewEntity("bateau", "Pierre"));
-        reviewEntities.add(new SimpleReviewEntity("avion", "Theodore"));
-        reviewEntities.add(new SimpleReviewEntity("auto", "Luc"));
+        reviewEntities.add(new SimpleReviewEntity("Squarespace", "Pierre", cliComponent));
+        reviewEntities.add(new SimpleReviewEntity("Wordpress", "Theodore", cliComponent));
+        reviewEntities.add(new SimpleReviewEntity("Webflow", "Luc", cliComponent));
     }
 
     public void run() {
         login();
         while (chooseAction()) ;
-        System.out.println("Merci d'avoir utiliser ce logiciel!");
+        System.out.println("Merci d'avoir utilisé ce logiciel!");
     }
 
     public void login() {
-        System.out.println("Quel est votre nom ?\n");
         printUserNames();
+        String input = cliComponent.printAndGetCommand("\nQuel est votre nom?");
 
-        String input = scanner.nextLine();
         currentUser = findUser(input);
 
         if (currentUser == null) {
@@ -87,13 +87,15 @@ public class Application {
 
     public boolean chooseAction() {
         boolean result = true;
+        StringBuilder sb = new StringBuilder();
 
-        System.out.println("Que désirez-vous faire?\n");
-        System.out.println("a pour ajouter une critique");
-        System.out.println("l pour lire une critique");
-        System.out.println("c pour changer d'utilisateur");
-        System.out.println("q pour quitter");
-        String answer = scanner.nextLine();
+        sb.append("Que désirez-vous faire?\n");
+        sb.append("a pour ajouter une critique\n");
+        sb.append("l pour lire une critique\n");
+        sb.append("c pour changer d'utilisateur\n");
+        sb.append("q pour quitter\n");
+
+        String answer = cliComponent.printAndGetCommand(sb.toString());
 
         switch (answer) {
             case "a":
@@ -116,14 +118,12 @@ public class Application {
 
 
     public void viewReviewAndPossiblyRate() {
-        System.out.println("Quelle critique voulez-vous consulter ?");
         printAllReviews();
+        String reponse = cliComponent.printAndGetCommand("Quelle critique voulez-vous consulter ?");
 
-        String reponse = scanner.nextLine();
-
-        for (Review simpleReviewEntity : reviewEntities) {
-            if (simpleReviewEntity.getTitle().equals(reponse)) {
-                chooseActionOnReview(simpleReviewEntity);
+        for (Review review : reviewEntities) {
+            if (review.getTitle().equals(reponse)) {
+                chooseActionOnReview(review);
                 break;
             }
         }
@@ -135,29 +135,34 @@ public class Application {
         }
     }
 
-    private void chooseActionOnReview(Review simpleReviewEntity) {
-        System.out.println();
-        System.out.println("Que désirez-vous faire avec cette critique?\n");
-        System.out.println("l pour lire une critique");
-        System.out.println("e pour effacer la critique");
+    private void chooseActionOnReview(Review review) {
+        StringBuilder sb = new StringBuilder();
 
-        String reponse = scanner.nextLine();
+        sb.append(("Que désirez-vous faire avec cette critique?\n"));
+        sb.append(("l pour lire une critique\n"));
+        sb.append(("e pour effacer la critique\n"));
 
-        switch (reponse) {
+        String answer = cliComponent.printAndGetCommand(sb.toString());
+
+        switch (answer) {
             case "l":
-                viewReviewAndPossiblyRate(simpleReviewEntity);
+                viewReviewAndPossiblyRate(review);
                 break;
             case "e":
-                deleteReview(simpleReviewEntity);
+                deleteReview(review);
                 break;
             default:
                 System.out.println("Option inconnue...");
         }
     }
 
-    private void viewReviewAndPossiblyRate(Review simpleReviewEntity) {
-        actionExecutor.execute(ViewAction.VIEW, simpleReviewEntity, currentUser);
-        actionExecutor.execute(RateAction.RATE, simpleReviewEntity, currentUser);
+    private void viewReviewAndPossiblyRate(Review review) {
+        actionExecutor.execute(ViewAction.VIEW, review, currentUser);
+        String answer = actionExecutor.execute(RateAction.RATE, review, currentUser);
+
+        if (answer.equals("o")) {
+            System.out.println("Vous avez apprécié la critique.");
+        }
     }
 
     private void deleteReview(Review simpleReviewEntity) {
@@ -171,26 +176,29 @@ public class Application {
 
     private void createReview() {
         if (currentUser.getType().equals(GuestEntity.USER_TYPE)) {
-            System.out.println("Désolé vous ne poouvez pas faire ça! Il faut être amateur ou profesionnel");
+            System.out.println("Désolé, vous ne pouvez pas faire cette action. Il faut être amateur ou professionnel.");
         } else {
             Review review = null;
 
             while (review == null) {
-                System.out.println("Quel type de critique souhaitez-vous créer?");
-                System.out.println("S pour Simple");
-                System.out.println("D pour Datée");
-                System.out.println("X pour Détaillée");
-                String answer = scanner.nextLine();
+                StringBuilder sb = new StringBuilder();
 
-                switch (answer) {
-                    case "S":
-                        review = new SimpleReviewEntity("", "");
+                sb.append("Quel type de critique souhaitez-vous créer?\n");
+                sb.append("S pour Simple\n");
+                sb.append("D pour Datée\n");
+                sb.append("X pour Détaillée\n");
+
+                String answer = cliComponent.printAndGetCommand(sb.toString());
+
+                switch (answer.toLowerCase()) {
+                    case "s":
+                        review = new SimpleReviewEntity("", "", cliComponent);
                         break;
-                    case "D":
-                        review = new DatedReviewEntity("", "");
+                    case "d":
+                        review = new DatedReviewEntity("", "", cliComponent);
                         break;
-                    case "X":
-                        review = new DetailedReviewEntity("", "");
+                    case "x":
+                        review = new DetailedReviewEntity("", "", cliComponent);
                         break;
                     default:
                         System.out.println("Option inconnue...choisis-en une bonne au moins.");

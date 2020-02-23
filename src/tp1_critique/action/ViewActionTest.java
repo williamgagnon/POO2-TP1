@@ -1,24 +1,24 @@
-package tp1_critique.actions;
+package tp1_critique.action;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tp1_critique.TestUtil;
-import tp1_critique.critiquable.Review;
+import tp1_critique.review.SimpleReviewEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ViewActionTest {
-    private Review review;
+    private SimpleReviewEntity simpleReviewEntity;
     private ViewAction viewAction;
 
     @BeforeEach
     void setUp() {
-        review = TestUtil.randomReview();
+        simpleReviewEntity = TestUtil.randomReview();
         viewAction = new ViewAction();
     }
 
     @Test
     void givenAValidReview_whenExecutingTheAction_ThenTheReviewIsDisplayed() {
-        assertTrue(viewAction.execute(review, TestUtil.randomGuest()).contains(review.getTitle()));
+        assertTrue(viewAction.execute(simpleReviewEntity, TestUtil.randomGuest()).contains(simpleReviewEntity.getTitle()));
     }
 }

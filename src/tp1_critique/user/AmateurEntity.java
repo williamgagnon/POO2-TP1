@@ -17,6 +17,6 @@ public class AmateurEntity extends GuestEntity {
 
     @Override
     public String toString() {
-        return "Amateur{}" + super.toString();
+        return super.toString();
     }
 }
